@@ -5,7 +5,7 @@ import './App.css';
 
 class App extends Component {
   state = {
-    searchTerm: '',
+    searchTerm: localStorage.getItem("searchTerm") ?? "",
     hasError: false,
   };
 
