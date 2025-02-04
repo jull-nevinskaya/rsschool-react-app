@@ -46,7 +46,9 @@ export const fetchPokemons = async (
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
+      const errorMessage = `Error ${response.status}: ${response.statusText}`;
+      console.error("API Error:", errorMessage);
+      throw new Error(errorMessage);
     }
 
     const data: PokemonAPIResponse | PokemonListAPIResponse = await response.json();
@@ -68,20 +70,31 @@ export const fetchPokemons = async (
     const pokemonList = data as PokemonListAPIResponse;
     const detailedResults = await Promise.all(
       pokemonList.results.map(async (pokemon) => {
-        const detailsResponse = await fetch(pokemon.url);
-        const details: PokemonAPIResponse = await detailsResponse.json();
-        return {
-          id: details.id,
-          name: details.name,
-          height: details.height,
-          weight: details.weight,
-          types: details.types.map((t) => t.type.name).join(", "),
-          image: details.sprites.front_default,
-        };
+        try {
+          const detailsResponse = await fetch(pokemon.url);
+
+          if (!detailsResponse.ok) {
+            console.warn(`Error fetching details for ${pokemon.name}: ${detailsResponse.status}`);
+            return null;
+          }
+
+          const details: PokemonAPIResponse = await detailsResponse.json();
+          return {
+            id: details.id,
+            name: details.name,
+            height: details.height,
+            weight: details.weight,
+            types: details.types.map((t) => t.type.name).join(", "),
+            image: details.sprites.front_default,
+          };
+        } catch (error) {
+          console.error(`Error fetching details for ${pokemon.name}:`, error);
+          return null;
+        }
       })
     );
 
-    return detailedResults;
+    return detailedResults.filter((p) => p !== null) as Pokemon[];
   } catch (error) {
     console.error("API Fetch Error:", error);
     throw error;

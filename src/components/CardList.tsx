@@ -1,7 +1,7 @@
-import { Component } from 'react';
-import Card from './Card';
-import Spinner from './Spinner';
-import { fetchPokemons } from '../api/api';
+import { Component } from "react";
+import Card from "./Card";
+import Spinner from "./Spinner";
+import { fetchPokemons } from "../api/api";
 
 interface Pokemon {
   id: number;
@@ -49,7 +49,22 @@ class CardList extends Component<CardListProps, CardListState> {
       }, 500);
     } catch (error) {
       console.error("API Fetch Error:", error);
-      this.setState({ error: "Pokemon not found!", loading: false });
+
+      let errorMessage = "Unexpected error occurred. Please try again";
+
+      if (error instanceof Error) {
+        if (error.message.includes("404")) {
+          errorMessage = "Pokemon not found. Let's try a different name";
+        } else if (error.message.startsWith("4")) {
+          errorMessage = "Invalid search query. Please try again";
+        } else if (error.message.startsWith("5")) {
+          errorMessage = "Server error. Please try again later";
+        } else {
+          errorMessage = "Network error. Please check your connection";
+        }
+      }
+
+      this.setState({ error: errorMessage, loading: false });
     }
   };
 
