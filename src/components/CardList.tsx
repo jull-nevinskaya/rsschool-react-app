@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './Card';
 import Spinner from './Spinner';
 import { fetchPokemons } from '../api/api';
@@ -16,65 +16,50 @@ interface CardListProps {
   searchTerm: string;
 }
 
-interface CardListState {
-  pokemons: Pokemon[];
-  loading: boolean;
-  error: string | null;
-}
+const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-class CardList extends Component<CardListProps, CardListState> {
-  state: CardListState = {
-    pokemons: [],
-    loading: false,
-    error: null,
-  };
-
-  componentDidMount() {
-    this.loadPokemons(this.props.searchTerm);
-  }
-
-  componentDidUpdate(prevProps: CardListProps) {
-    if (prevProps.searchTerm !== this.props.searchTerm) {
-      this.loadPokemons(this.props.searchTerm);
-    }
-  }
-
-  loadPokemons = async (searchTerm: string) => {
-    this.setState({ loading: true, error: null });
+  const loadPokemons = async (searchTerm: string) => {
+    setLoading(true);
+    setError(null);
 
     try {
       const results = await fetchPokemons(searchTerm, 10, 0);
       setTimeout(() => {
-        this.setState({ pokemons: results, loading: false });
+        setPokemons(results);
+        setLoading(false);
       }, 500);
     } catch (error) {
       console.error("API Fetch Error:", error);
-      this.setState({ error: "Pokemon not found!", loading: false });
+      setError("Pokemon not found!");
+      setLoading(false);
     }
   };
 
-  render() {
-    const { pokemons, loading, error } = this.state;
+  useEffect(() => {
+    loadPokemons(searchTerm);
+  }, [searchTerm]);
 
-    if (loading) return <Spinner />;
-    if (error) return <p className="error-message">{error}</p>;
+  if (loading) return <Spinner />;
+  if (error) return <p className="error-message">{error}</p>;
 
-    return (
-      <div className="card-list">
-        {pokemons.map((pokemon) => (
-          <Card
-            key={pokemon.id}
-            id={pokemon.id}
-            name={pokemon.name}
-            height={pokemon.height}
-            weight={pokemon.weight}
-            types={pokemon.types}
-            image={pokemon.image}
-          />
-        ))}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="card-list">
+      {pokemons.map((pokemon) => (
+        <Card
+          key={pokemon.id}
+          id={pokemon.id}
+          name={pokemon.name}
+          height={pokemon.height}
+          weight={pokemon.weight}
+          types={pokemon.types}
+          image={pokemon.image}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default CardList;

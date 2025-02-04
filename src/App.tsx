@@ -1,37 +1,35 @@
-import { Component } from 'react';
-import Search from './components/Search';
-import Results from './components/Results';
-import './App.css';
+import React, { useState } from "react";
+import Search from "./components/Search";
+import Results from "./components/Results";
+import "./App.css";
 
-class App extends Component {
-  state = {
-    searchTerm: localStorage.getItem("searchTerm") ?? "",
-    hasError: false,
+const App: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState<string>(
+    localStorage.getItem("searchTerm") ?? ""
+  );
+  const [hasError, setHasError] = useState<boolean>(false);
+
+  const handleSearch = (searchTerm: string) => {
+    setSearchTerm(searchTerm);
   };
 
-  handleSearch = (searchTerm: string) => {
-    this.setState({ searchTerm });
+  const handleThrowError = () => {
+    setHasError(true);
   };
 
-  handleThrowError = () => {
-    this.setState({ hasError: true });
-  };
-
-  render() {
-    if (this.state.hasError) {
-      throw new Error("Test Error");
-    }
-
-    return (
-        <div className="container">
-          <Search onSearch={this.handleSearch} />
-          <Results searchTerm={this.state.searchTerm} />
-          <button className="error-button" onClick={this.handleThrowError}>
-            Throw Error
-          </button>
-        </div>
-    );
+  if (hasError) {
+    throw new Error("Test Error");
   }
-}
+
+  return (
+    <div className="container">
+      <Search onSearch={handleSearch} />
+      <Results searchTerm={searchTerm} />
+      <button className="error-button" onClick={handleThrowError}>
+        Throw Error
+      </button>
+    </div>
+  );
+};
 
 export default App;

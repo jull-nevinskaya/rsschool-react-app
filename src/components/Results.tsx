@@ -1,19 +1,16 @@
-import { Component } from 'react';
-import CardList from './CardList';
+import CardList from "./CardList";
 
 interface ResultsProps {
   searchTerm: string;
 }
 
-class Results extends Component<ResultsProps> {
-  render() {
-    return (
-      <div className="results">
-        <h2>Search Results</h2>
-        <CardList searchTerm={this.props.searchTerm} />
-      </div>
-    );
-  }
-}
+const Results: React.FC<ResultsProps> = ({ searchTerm }) => {
+  return (
+    <div className="results">
+      <h2>Search Results</h2>
+      <CardList searchTerm={searchTerm} />
+    </div>
+  );
+};
 
 export default Results;

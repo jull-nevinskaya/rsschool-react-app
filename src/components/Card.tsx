@@ -1,5 +1,3 @@
-import { Component } from 'react';
-
 interface CardProps {
   id: number;
   name: string;
@@ -9,18 +7,17 @@ interface CardProps {
   image: string;
 }
 
-class Card extends Component<CardProps> {
-  render() {
-    return (
-      <div className="card">
-        <h3>{this.props.name} (#{this.props.id})</h3>
-        <img src={this.props.image} alt={this.props.name} />
-        <p>Height: {this.props.height}</p>
-        <p>Weight: {this.props.weight}</p>
-        <p>Type: {this.props.types}</p>
-      </div>
-    );
-  }
-}
+const Card: React.FC<CardProps> = ({ id, name, height, weight, types, image }) => {
+  return (
+    <div className="card">
+      <h3>{name} (#{id})</h3>
+      <img src={image} alt={name} />
+      <p>Height: {height}</p>
+      <p>Weight: {weight}</p>
+      <p>Type: {types}</p>
+    </div>
+  );
+};
+
 
 export default Card;
