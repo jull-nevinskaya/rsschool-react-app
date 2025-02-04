@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import Search from "./components/Search";
 import Results from "./components/Results";
+import useSearchTerm from "./hooks/useSearchTerm";
 import "./App.css";
 
 const App: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState<string>(
-    localStorage.getItem("searchTerm") ?? ""
-  );
+  const [searchTerm, setSearchTerm] = useSearchTerm();
   const [hasError, setHasError] = useState<boolean>(false);
 
   const handleSearch = (searchTerm: string) => {

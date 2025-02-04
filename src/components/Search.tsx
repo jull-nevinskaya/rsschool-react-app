@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import useSearchTerm from "../hooks/useSearchTerm";
 
 interface SearchProps {
   onSearch: (term: string) => void;
 }
 
 const Search: React.FC<SearchProps> = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState<string>(
-    localStorage.getItem("searchTerm") ?? ""
-  );
-
-  useEffect(() => {
-    localStorage.setItem("searchTerm", searchTerm);
-  }, [searchTerm]);
+  const [searchTerm, setSearchTerm] = useSearchTerm();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
