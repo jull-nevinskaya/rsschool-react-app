@@ -74,6 +74,7 @@
   flex-direction: column;
   justify-content: start;
   align-items: center;
+  cursor: pointer;
 }
 .card p {
   margin: 5px 0;

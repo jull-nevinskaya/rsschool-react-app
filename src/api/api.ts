@@ -6,7 +6,7 @@ export interface PokemonType {
   };
 }
 
-export interface PokemonAPIResponse {
+interface PokemonApiResponse {
   id: number;
   name: string;
   height: number;
@@ -87,4 +87,19 @@ export const fetchPokemons = async (
     console.error("API Fetch Error:", error);
     throw error;
   }
+};
+
+export const fetchPokemonDetails = async (id: string) => {
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+  if (!response.ok) throw new Error("Failed to fetch Pokémon data");
+
+  const data: PokemonApiResponse = await response.json();
+  return {
+    id: data.id,
+    name: data.name,
+    height: data.height,
+    weight: data.weight,
+    types: data.types.map((t) => t.type.name),
+    image: data.sprites.front_default,
+  };
 };

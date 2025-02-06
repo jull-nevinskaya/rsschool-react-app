@@ -24,7 +24,7 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
@@ -63,28 +63,39 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
       });
   }, [searchTerm, page]);
 
+  const handleClick = (id: number) => {
+    searchParams.set("details", id.toString());
+    setSearchParams(searchParams);
+  };
+
   if (loading) return <Spinner />;
   if (error) return <p className="error-message">{error}</p>;
 
   return (
-    <div className="card-list">
-      {pokemons.length > 0 ? (
-        pokemons.map((pokemon) => (
-          <Card
-            key={pokemon.id}
-            id={pokemon.id}
-            name={pokemon.name}
-            height={pokemon.height}
-            weight={pokemon.weight}
-            types={pokemon.types}
-            image={pokemon.image}
-          />
-        ))
-      ) : (
-        <p className="error-message">No Pokemon found for "{searchTerm}". Try a different name.</p>
-      )}
+    <div style={{ display: "flex", gap: "10px" }}>
+      <div style={{ flex: 1 }}>
+        <div className="card-list">
+          {pokemons.length > 0 ? (
+            pokemons.map((pokemon) => (
+              <Card
+                key={pokemon.id}
+                id={pokemon.id}
+                name={pokemon.name}
+                image={pokemon.image}
+                height={pokemon.height}
+                weight={pokemon.weight}
+                types={pokemon.types}
+                onClick={() => handleClick(pokemon.id)}
+              />
+            ))
+          ) : (
+            <p className="error-message">No Pokemon found for "{searchTerm}". Try a different name.</p>
+          )}
+        </div>
 
-      {totalCount > limit && <Pagination totalItems={totalCount} itemsPerPage={limit} />}
+        {totalCount > limit && <Pagination totalItems={totalCount} itemsPerPage={limit} />}
+      </div>
+
     </div>
   );
 };
