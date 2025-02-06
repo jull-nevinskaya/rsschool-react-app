@@ -61,7 +61,7 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [searchTerm, page]);
+  }, [searchTerm, page, offset]);
 
   const handleClick = (id: number) => {
     searchParams.set("details", id.toString());
