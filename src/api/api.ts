@@ -35,10 +35,10 @@ export const fetchPokemons = async (
   searchTerm: string = "",
   limit: number = 10,
   offset: number = 0
-): Promise<Pokemon[]> => {
+): Promise<{ pokemons: Pokemon[]; totalCount: number }> => {
   try {
     const url = searchTerm
-      ? `${API_URL}/${searchTerm.toLowerCase()}`
+      ? `${API_URL}/${encodeURIComponent(searchTerm.toLowerCase())}`
       : `${API_URL}?limit=${limit}&offset=${offset}`;
 
     console.log(`Fetching: ${url}`);
@@ -46,42 +46,43 @@ export const fetchPokemons = async (
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
+      throw new Error(`Error ${response.status}`);
     }
 
-    const data: PokemonAPIResponse | PokemonListAPIResponse = await response.json();
+    const data = await response.json();
 
     if (searchTerm) {
-      const pokemonData = data as PokemonAPIResponse;
-      return [
-        {
-          id: pokemonData.id,
-          name: pokemonData.name,
-          height: pokemonData.height,
-          weight: pokemonData.weight,
-          types: pokemonData.types.map((t) => t.type.name).join(", "),
-          image: pokemonData.sprites.front_default,
-        },
-      ];
+      return {
+        pokemons: [
+          {
+            id: data.id,
+            name: data.name,
+            height: data.height,
+            weight: data.weight,
+            types: data.types.map((t: PokemonType) => t.type.name).join(", "),
+            image: data.sprites.front_default,
+          },
+        ],
+        totalCount: 1,
+      };
     }
 
-    const pokemonList = data as PokemonListAPIResponse;
     const detailedResults = await Promise.all(
-      pokemonList.results.map(async (pokemon) => {
+      data.results.map(async (pokemon: { name: string; url: string }) => {
         const detailsResponse = await fetch(pokemon.url);
-        const details: PokemonAPIResponse = await detailsResponse.json();
+        const details = await detailsResponse.json();
         return {
           id: details.id,
           name: details.name,
           height: details.height,
           weight: details.weight,
-          types: details.types.map((t) => t.type.name).join(", "),
+          types: details.types.map((t: PokemonType) => t.type.name).join(", "),
           image: details.sprites.front_default,
         };
       })
     );
 
-    return detailedResults;
+    return { pokemons: detailedResults, totalCount: data.count };
   } catch (error) {
     console.error("API Fetch Error:", error);
     throw error;

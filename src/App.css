@@ -160,3 +160,17 @@
     transform: rotate(360deg);
   }
 }
+
+.btn-pagination {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin: 0 20px 0 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.pagination span {
+  font-size: 14px;
+}

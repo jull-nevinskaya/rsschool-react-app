@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Search from "./components/Search";
-import Results from "./components/Results";
+import CardList from "./components/CardList";
+import NotFound from "./components/NotFound";
 import useSearchTerm from "./hooks/useSearchTerm";
 import "./App.css";
 
@@ -21,13 +23,19 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="container">
-      <Search onSearch={handleSearch} />
-      <Results searchTerm={searchTerm} />
-      <button className="error-button" onClick={handleThrowError}>
-        Throw Error
-      </button>
-    </div>
+    <Router>
+      <div className="container">
+        <Search onSearch={handleSearch} />
+        <Routes>
+          <Route path="/" element={<Navigate replace to="/search?page=1" />} />
+          <Route path="/search" element={<CardList searchTerm={searchTerm} />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <button className="error-button" onClick={handleThrowError}>
+          Throw Error
+        </button>
+      </div>
+    </Router>
   );
 };
 
