@@ -29,41 +29,38 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const loadPokemons = async () => {
+  useEffect(() => {
     setLoading(true);
     setError(null);
 
-    try {
-      const results = await fetchPokemons(searchTerm, limit, offset);
+    fetchPokemons(searchTerm, limit, offset)
+      .then((results) => {
+        setPokemons(results.pokemons);
+        setTotalCount(results.totalCount);
+      })
+      .catch((error) => {
+        console.error("API Fetch Error:", error);
 
-      setPokemons(results.pokemons);
-      setTotalCount(results.totalCount);
-    } catch (error) {
-      console.error("API Fetch Error:", error);
+        let errorMessage = "Unexpected error occurred. Please try again";
 
-      let errorMessage = "Unexpected error occurred. Please try again";
-
-      if (error instanceof Error) {
-        if (error.message.includes("404")) {
-          errorMessage = "Pokemon not found. Let's try a different name";
-        } else if (error.message.startsWith("4")) {
-          errorMessage = "Invalid search query. Please try again";
-        } else if (error.message.startsWith("5")) {
-          errorMessage = "Server error. Please try again later";
-        } else {
-          errorMessage = "Network error. Please check your connection";
+        if (error instanceof Error) {
+          if (error.message.includes("404")) {
+            errorMessage = "Pokemon not found. Let's try a different name";
+          } else if (error.message.startsWith("4")) {
+            errorMessage = "Invalid search query. Please try again";
+          } else if (error.message.startsWith("5")) {
+            errorMessage = "Server error. Please try again later";
+          } else {
+            errorMessage = "Network error. Please check your connection";
+          }
         }
-      }
 
-      setError(errorMessage);
-      setPokemons([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadPokemons();
+        setError(errorMessage);
+        setPokemons([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [searchTerm, page]);
 
   if (loading) return <Spinner />;
