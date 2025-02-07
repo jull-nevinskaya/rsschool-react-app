@@ -20,9 +20,6 @@ interface PokemonApiResponse {
 export interface Pokemon {
   id: number;
   name: string;
-  height: number;
-  weight: number;
-  types: string;
   image: string;
 }
 
@@ -57,9 +54,6 @@ export const fetchPokemons = async (
           {
             id: data.id,
             name: data.name,
-            height: data.height,
-            weight: data.weight,
-            types: data.types.map((t: PokemonType) => t.type.name).join(", "),
             image: data.sprites.front_default,
           },
         ],

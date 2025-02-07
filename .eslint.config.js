@@ -41,5 +41,11 @@ export default tseslint.config(
         version: 'detect',
       },
     },
+    ignores: [
+      "node_modules/",
+      "dist/",
+      "build/",
+      "coverage/",
+    ],
   }
 );

@@ -75,6 +75,7 @@
   justify-content: start;
   align-items: center;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .card:hover {
@@ -175,6 +176,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #f9f9f9;
+  transition: background-color 0.3s ease;
 }
 
 .btn-pagination:hover {
