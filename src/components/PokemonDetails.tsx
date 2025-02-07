@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { fetchPokemonDetails } from "../api/api"; // Функция для запроса API
+import { fetchPokemonDetails } from "../api/api";
+import Spinner from './Spinner.tsx';
 
 interface Pokemon {
   id: number;
@@ -17,7 +18,6 @@ const PokemonDetails: React.FC<{ pokemonId: string }> = ({ pokemonId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Запрос в API при изменении `pokemonId`
   useEffect(() => {
     if (!pokemonId) return;
 
@@ -35,22 +35,22 @@ const PokemonDetails: React.FC<{ pokemonId: string }> = ({ pokemonId }) => {
     setSearchParams(searchParams);
   };
 
-  if (loading) return <p>Loading Pokémon details...</p>;
+  if (loading) return <Spinner />;
   if (error) return <p className="error-message">{error}</p>;
-  if (!pokemon) return <p>No details available.</p>;
+  if (!pokemon) return <p>No details available</p>;
 
   return (
-    <div>
-      <button onClick={handleClose} style={{ marginBottom: "10px", cursor: "pointer" }}>
-        ❌ Закрыть
-      </button>
-      <h2>Detailed info about {pokemon.name}</h2>
-      <img src={pokemon.image} alt={pokemon.name} style={{ width: "150px" }} />
-      <p><strong>Height:</strong> {pokemon.height}</p>
-      <p><strong>Weight:</strong> {pokemon.weight}</p>
-      <p><strong>Types:</strong> {pokemon.types.join(", ")}</p>
-    </div>
-  );
-};
+    <div className="detail-info">
+      <div className="detail-header">
+        <button className="btn-close" onClick={handleClose}>&times;</button>
+        <h2>{pokemon.name}</h2>
+      </div>
+        <img src={pokemon.image} alt={pokemon.name} style={{ width: "200px" }} />
+        <p><strong>Height:</strong> {pokemon.height}</p>
+        <p><strong>Weight:</strong> {pokemon.weight}</p>
+        <p><strong>Types:</strong> {pokemon.types.join(", ")}</p>
+      </div>
+      );
+      };
 
-export default PokemonDetails;
+      export default PokemonDetails;

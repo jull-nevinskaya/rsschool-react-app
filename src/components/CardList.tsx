@@ -8,9 +8,6 @@ import { fetchPokemons } from "../api/api";
 interface Pokemon {
   id: number;
   name: string;
-  height: number;
-  weight: number;
-  types: string;
   image: string;
 }
 
@@ -26,7 +23,7 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
-  const limit = 10;
+  const limit = 15;
   const offset = (page - 1) * limit;
 
   useEffect(() => {
@@ -82,9 +79,6 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
                 id={pokemon.id}
                 name={pokemon.name}
                 image={pokemon.image}
-                height={pokemon.height}
-                weight={pokemon.weight}
-                types={pokemon.types}
                 onClick={() => handleClick(pokemon.id)}
               />
             ))

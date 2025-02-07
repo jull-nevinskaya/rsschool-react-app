@@ -52,7 +52,7 @@ const MainPage: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
         setSearchParams(searchParams);
       }
     },
-    [searchParams, setSearchParams] // Добавляем зависимости
+    [searchParams, setSearchParams]
   );
 
   useEffect(() => {
@@ -62,12 +62,12 @@ const MainPage: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
 
   return (
     <div style={{ display: "flex", gap: "10px" }}>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 2 }}>
         <CardList searchTerm={searchTerm} />
       </div>
 
       {selectedPokemon && (
-        <div ref={detailsRef} style={{ flex: 1, borderLeft: "1px solid #ccc", padding: "10px" }}
+        <div className="right-column" ref={detailsRef}
              onClick={(e) => e.stopPropagation()}>
           <PokemonDetails pokemonId={selectedPokemon} />
         </div>

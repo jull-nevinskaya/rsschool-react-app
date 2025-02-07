@@ -33,7 +33,7 @@ export interface PokemonListAPIResponse {
 
 export const fetchPokemons = async (
   searchTerm: string = "",
-  limit: number = 10,
+  limit: number = 15,
   offset: number = 0
 ): Promise<{ pokemons: Pokemon[]; totalCount: number }> => {
   try {
@@ -74,9 +74,6 @@ export const fetchPokemons = async (
         return {
           id: details.id,
           name: details.name,
-          height: details.height,
-          weight: details.weight,
-          types: details.types.map((t: PokemonType) => t.type.name).join(", "),
           image: details.sprites.front_default,
         };
       })
@@ -91,7 +88,7 @@ export const fetchPokemons = async (
 
 export const fetchPokemonDetails = async (id: string) => {
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-  if (!response.ok) throw new Error("Failed to fetch Pokémon data");
+  if (!response.ok) throw new Error("Failed to fetch Pokemon data");
 
   const data: PokemonApiResponse = await response.json();
   return {
