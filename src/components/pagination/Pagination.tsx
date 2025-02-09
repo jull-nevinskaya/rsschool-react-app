@@ -17,7 +17,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalItems, itemsPerPage }) => 
     }
   }, [currentPage, totalPages, setSearchParams]);
 
-  if (currentPage > totalPages) return null; // Теперь `setSearchParams` вызывается в `useEffect`
+  if (currentPage > totalPages) return null;
 
   if (totalPages <= 1) return null;
 

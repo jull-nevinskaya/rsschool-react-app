@@ -14,9 +14,13 @@ module.exports = {
       lines: 70,
     },
   },
-  coveragePathIgnorePatterns: ["/node_modules/", "App.tsx"],
   coverageDirectory: "coverage",
-  collectCoverageFrom: ["**/*.tsx"],
+  collectCoverageFrom: [
+    "src/**/*.tsx",
+    "!src/**/*.test.tsx",
+    "!src/**/*.spec.tsx",
+    "!src/__tests__/setup.ts"
+  ],
   transform: {
     "^.+\\.tsx?$": ["ts-jest", { tsconfig: "tsconfig.app.json" }]
   },

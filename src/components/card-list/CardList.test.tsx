@@ -90,7 +90,7 @@ describe("CardList Component", () => {
     expect(await screen.findByText(/No Pokemon found for "UnknownPokemon"/i)).toBeInTheDocument();
   });
 
-  test("navigates to details page with correct parameters when a Pokémon card is clicked", async () => {
+  test("navigates to details page with correct parameters when a Pokemon card is clicked", async () => {
     (fetchPokemons as jest.MockedFunction<typeof fetchPokemons>).mockResolvedValue({
       pokemons: [{ id: 1, name: "Bulbasaur", image: "bulbasaur.png" }],
       totalCount: 1,

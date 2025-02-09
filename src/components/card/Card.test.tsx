@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import Card from "./Card.tsx";
+import { MemoryRouter } from "react-router-dom";
 
-test("renders the card with correct Pokémon data", () => {
+test("renders the card with correct Pokemon data", () => {
   const pokemon = {
     id: 25,
     name: "Pikachu",
@@ -17,4 +18,19 @@ test("renders the card with correct Pokémon data", () => {
   const img = screen.getByRole("img");
   expect(img).toHaveAttribute("src", "pikachu.png");
   expect(img).toHaveAttribute("alt", "Pikachu");
+});
+
+test("clicking the card triggers onClick event", () => {
+  const mockOnClick = jest.fn();
+
+  render(
+    <MemoryRouter>
+      <Card id={1} name="Bulbasaur" image="https://example.com/bulbasaur.png" onClick={mockOnClick} />
+    </MemoryRouter>
+  );
+
+  const cardElement = screen.getByTestId("pokemon-card");
+  fireEvent.click(cardElement);
+
+  expect(mockOnClick).toHaveBeenCalledTimes(1);
 });
