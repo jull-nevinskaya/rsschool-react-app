@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
 interface PaginationProps {
@@ -10,6 +10,14 @@ const Pagination: React.FC<PaginationProps> = ({ totalItems, itemsPerPage }) => 
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setSearchParams({ page: totalPages.toString() });
+    }
+  }, [currentPage, totalPages, setSearchParams]);
+
+  if (currentPage > totalPages) return null; // Теперь `setSearchParams` вызывается в `useEffect`
 
   if (totalPages <= 1) return null;
 

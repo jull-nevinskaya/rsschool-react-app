@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from "react-router-dom";
-import Search from "./components/Search";
-import CardList from "./components/CardList";
-import NotFound from "./components/NotFound";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Outlet, useParams, useSearchParams } from "react-router-dom";
+import Search from "./components/search/Search.tsx";
+import CardList from "./components/card-list/CardList.tsx";
+import NotFound from "./components/404/NotFound.tsx";
 import useSearchTerm from "./hooks/useSearchTerm";
 import "./App.css";
-import PokemonDetails from "./components/PokemonDetails";
+import PokemonDetails from "./components/pokemon-details/PokemonDetails.tsx";
 
 const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useSearchTerm();
@@ -29,7 +29,9 @@ const App: React.FC = () => {
         <Search onSearch={handleSearch} />
         <Routes>
           <Route path="/" element={<Navigate replace to="/search?page=1" />} />
-          <Route path="/search" element={<MainPage searchTerm={searchTerm} />} />
+          <Route path="/search" element={<MainPage searchTerm={searchTerm} />}>
+            <Route path="details/:id" element={<PokemonDetails />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
         <button className="error-button" onClick={handleThrowError}>
@@ -41,35 +43,26 @@ const App: React.FC = () => {
 };
 
 const MainPage: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const selectedPokemon = searchParams.get("details");
-  const detailsRef = useRef<HTMLDivElement | null>(null);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id?: string }>();
+  const page = searchParams.get("page") || "1";
 
-  const handleCloseDetails = useCallback(
-    (e: MouseEvent) => {
-      if (detailsRef.current && !detailsRef.current.contains(e.target as Node)) {
-        searchParams.delete("details");
-        setSearchParams(searchParams);
-      }
-    },
-    [searchParams, setSearchParams]
-  );
-
-  useEffect(() => {
-    document.addEventListener("click", handleCloseDetails);
-    return () => document.removeEventListener("click", handleCloseDetails);
-  }, [handleCloseDetails]);
+  const handleCloseDetails = () => {
+    if (id) {
+      navigate(`/search?page=${page}`);
+    }
+  };
 
   return (
-    <div style={{ display: "flex", gap: "10px" }}>
-      <div style={{ flex: 2 }}>
+    <div className="cardlist-main">
+      <div className="col-2" onClick={handleCloseDetails}>
         <CardList searchTerm={searchTerm} />
       </div>
 
-      {selectedPokemon && (
-        <div className="right-column" ref={detailsRef}
-             onClick={(e) => e.stopPropagation()}>
-          <PokemonDetails pokemonId={selectedPokemon} />
+      {id && (
+        <div className="right-column">
+          <Outlet />
         </div>
       )}
     </div>

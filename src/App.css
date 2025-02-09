@@ -227,3 +227,27 @@
   max-width: 400px;
   max-height: 700px;
 }
+
+.cardlist-main {
+  display: flex;
+  gap: 10px;
+  min-width: 100%;
+}
+
+.col-2 {
+  flex: 2;
+}
+
+.col-1 {
+  flex: 1;
+}
+
+.home-link {
+  color: blue;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.home-link:hover {
+  text-decoration: none;
+}

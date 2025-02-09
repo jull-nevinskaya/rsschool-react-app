@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { fetchPokemonDetails } from "../api/api";
-import Spinner from './Spinner.tsx';
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchPokemonDetails } from "../../api/api.ts";
+import Spinner from '../spinner/Spinner.tsx';
 
 interface Pokemon {
   id: number;
@@ -12,27 +12,31 @@ interface Pokemon {
   image: string;
 }
 
-const PokemonDetails: React.FC<{ pokemonId: string }> = ({ pokemonId }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+const PokemonDetails: React.FC = () => {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
   useEffect(() => {
-    if (!pokemonId) return;
+    if (!id) return;
 
     setLoading(true);
     setError(null);
 
-    fetchPokemonDetails(pokemonId)
+    fetchPokemonDetails(id)
       .then((data) => setPokemon(data))
       .catch(() => setError("Failed to load Pokémon details. Please try again."))
       .finally(() => setLoading(false));
-  }, [pokemonId]);
+  }, [id]);
 
   const handleClose = () => {
-    searchParams.delete("details");
-    setSearchParams(searchParams);
+    const currentParams = new URLSearchParams(window.location.search);
+    const page = currentParams.get("page") || "1";
+
+    navigate(`/search?page=${page}`);
   };
 
   if (loading) return <Spinner />;

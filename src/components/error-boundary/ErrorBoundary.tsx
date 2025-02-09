@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo } from 'react';
-import pikachuImg from "../assets/pikachu.jpg";
+import pikachuImg from "../../assets/pikachu.jpg";
 
 interface ErrorBoundaryState {
   hasError: boolean;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import Card from "./Card";
-import Spinner from "./Spinner";
-import Pagination from "./Pagination";
-import { fetchPokemons } from "../api/api";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import Card from "../card/Card.tsx";
+import Spinner from "../spinner/Spinner.tsx";
+import Pagination from "../pagination/Pagination.tsx";
+import { fetchPokemons } from "../../api/api.ts";
 
 interface Pokemon {
   id: number;
@@ -11,20 +11,17 @@ interface Pokemon {
   image: string;
 }
 
-interface CardListProps {
-  searchTerm: string;
-}
-
-const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
+const CardList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const limit = 15;
   const offset = (page - 1) * limit;
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -61,16 +58,14 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
   }, [searchTerm, page, offset]);
 
   const handleClick = (id: number) => {
-    searchParams.set("details", id.toString());
-    setSearchParams(searchParams);
+    navigate(`details/${id}?page=${page}`);
   };
 
   if (loading) return <Spinner />;
   if (error) return <p className="error-message">{error}</p>;
 
   return (
-    <div style={{ display: "flex", gap: "10px" }}>
-      <div style={{ flex: 1 }}>
+      <div className="col-1">
         <div className="card-list">
           {pokemons.length > 0 ? (
             pokemons.map((pokemon) => (
@@ -89,8 +84,6 @@ const CardList: React.FC<CardListProps> = ({ searchTerm }) => {
 
         {totalCount > limit && <Pagination totalItems={totalCount} itemsPerPage={limit} />}
       </div>
-
-    </div>
   );
 };
 

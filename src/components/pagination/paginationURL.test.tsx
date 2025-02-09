@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter, useSearchParams } from "react-router-dom";
-import Pagination from "./Pagination";
+import { MemoryRouter, Route, Routes, useSearchParams } from "react-router-dom";
+import Pagination from "./Pagination.tsx";
 import { jest } from "@jest/globals";
 
 jest.mock("react-router-dom", () => {
@@ -57,4 +57,26 @@ test("updates URL query parameter when page changes", async () => {
   await waitFor(() => {
     expect(mockSetSearchParams).toHaveBeenCalledWith({ page: "1" });
   });
+});
+
+test("if currentPage > totalPages, it sets page = totalPages", async () => {
+  const setSearchParams = jest.fn();
+  (useSearchParams as jest.Mock).mockReturnValue([
+    new URLSearchParams("?page=10"),
+    setSearchParams,
+  ]);
+
+  render(
+    <MemoryRouter>
+      <Routes>
+        <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  await waitFor(() => {
+    expect(setSearchParams).toHaveBeenCalledWith({ page: "3" });
+  });
+  expect(setSearchParams).toHaveBeenCalledTimes(1);
+  expect(screen.queryByText("Page 10 / 3")).not.toBeInTheDocument();
 });

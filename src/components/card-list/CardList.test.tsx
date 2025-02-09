@@ -1,15 +1,18 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter, useSearchParams } from "react-router-dom";
-import CardList from "./CardList";
-import { fetchPokemons } from "../api/api";
+import CardList from "./CardList.tsx";
+import { fetchPokemons } from "../../api/api.ts";
 import { jest } from "@jest/globals";
 
-jest.mock("../api/api");
+const mockNavigate = jest.fn();
+
+jest.mock("../../api/api.ts");
 jest.mock("react-router-dom", () => {
   const actual = jest.requireActual<typeof import("react-router-dom")>("react-router-dom");
   return {
     ...actual,
     useSearchParams: jest.fn(),
+    useNavigate: () => mockNavigate,
   };
 });
 
@@ -21,11 +24,11 @@ beforeEach(() => {
 });
 
 beforeEach(() => {
-  jest.spyOn(console, "error").mockImplementation(() => {}); // Подавляет все console.error
+  jest.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
-  jest.restoreAllMocks(); // Восстанавливает оригинальное поведение console.error
+  jest.restoreAllMocks();
 });
 
 describe("CardList Component", () => {
@@ -87,14 +90,14 @@ describe("CardList Component", () => {
     expect(await screen.findByText(/No Pokemon found for "UnknownPokemon"/i)).toBeInTheDocument();
   });
 
-  test("adds 'details' parameter when a Pokémon card is clicked", async () => {
-    mockFetchPokemons.mockResolvedValue({
+  test("navigates to details page with correct parameters when a Pokémon card is clicked", async () => {
+    (fetchPokemons as jest.MockedFunction<typeof fetchPokemons>).mockResolvedValue({
       pokemons: [{ id: 1, name: "Bulbasaur", image: "bulbasaur.png" }],
       totalCount: 1,
     });
 
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/"]}>
         <CardList searchTerm="" />
       </MemoryRouter>
     );
@@ -102,7 +105,7 @@ describe("CardList Component", () => {
     const card = await screen.findByText(/Bulbasaur/i);
     fireEvent.click(card);
 
-    expect(mockSetSearchParams).toHaveBeenCalledWith(new URLSearchParams("?page=1&details=1"));
+    expect(mockNavigate).toHaveBeenCalledWith("details/1?page=1");
   });
 
   test("renders spinner while loading", async () => {

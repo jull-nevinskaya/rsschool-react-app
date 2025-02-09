@@ -1,5 +1,5 @@
 import React from "react";
-import useSearchTerm from "../hooks/useSearchTerm";
+import useSearchTerm from "../../hooks/useSearchTerm.ts";
 
 interface SearchProps {
   onSearch: (term: string) => void;

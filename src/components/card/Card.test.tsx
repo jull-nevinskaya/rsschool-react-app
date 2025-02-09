@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import Card from "./Card";
+import Card from "./Card.tsx";
 
 test("renders the card with correct Pokémon data", () => {
   const pokemon = {
