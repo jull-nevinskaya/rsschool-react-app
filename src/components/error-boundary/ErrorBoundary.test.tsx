@@ -1,16 +1,28 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from '@testing-library/react';
 import ErrorBoundary from "./ErrorBoundary.tsx";
+import { useState } from 'react';
 
 const ThrowError = () => {
   throw new Error("Test error");
 };
 
+const ToggleErrorComponent = () => {
+  const [throwError, setThrowError] = useState(false);
+  if (throwError) {
+    throw new Error("Test error");
+  }
+  return (
+    <button onClick={() => setThrowError(true)}>Trigger Error</button>
+  );
+};
+
+
 beforeEach(() => {
-  jest.spyOn(console, "error").mockImplementation(() => {}); // Подавляем console.error
+  jest.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
-  jest.restoreAllMocks(); // Восстанавливаем console.error после тестов
+  jest.restoreAllMocks();
 });
 
 describe("ErrorBoundary component", () => {
@@ -21,20 +33,34 @@ describe("ErrorBoundary component", () => {
       </ErrorBoundary>
     );
 
-    // Проверяем, что отрендерен дочерний элемент
     expect(screen.getByTestId("child")).toBeInTheDocument();
   });
 
   it("displays error message when an error occurs", () => {
-    // Рендерим компонент, который вызывает ошибку
     render(
       <ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>
     );
 
-    // Проверяем, что появилось сообщение об ошибке
     expect(screen.getByText("Ooops... something went wrong(")).toBeInTheDocument();
     expect(screen.getByText("Try refreshing the page or click the button below")).toBeInTheDocument();
+  });
+
+  it("resets error state when 'Try Again' button is clicked", () => {
+    render(
+      <ErrorBoundary>
+        <ToggleErrorComponent />
+      </ErrorBoundary>
+    );
+
+    fireEvent.click(screen.getByText("Trigger Error"));
+
+    expect(screen.getByText("Ooops... something went wrong(")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Try Again"));
+
+    expect(screen.queryByText("Ooops... something went wrong(")).not.toBeInTheDocument();
+    expect(screen.getByText("Trigger Error")).toBeInTheDocument();
   });
 });

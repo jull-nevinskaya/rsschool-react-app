@@ -13,6 +13,7 @@ const renderWithRouter = (initialRoute: string) => {
     <MemoryRouter initialEntries={[initialRoute]}>
       <Routes>
         <Route path="/pokemon/:id" element={<PokemonDetails />} />
+        <Route path="/pokemon" element={<PokemonDetails />} />
         <Route path="/search" element={<p>Search Page</p>} />
       </Routes>
     </MemoryRouter>
@@ -99,5 +100,11 @@ describe("PokemonDetails Component", () => {
     await waitFor(() => {
       expect(screen.getByText("Search Page")).toBeInTheDocument();
     });
+  });
+
+  test("renders 'No details available' when id is missing", () => {
+    renderWithRouter("/pokemon");
+
+    expect(screen.getByText("No details available")).toBeInTheDocument();
   });
 });

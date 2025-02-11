@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Card from "./Card.tsx";
-import { MemoryRouter } from "react-router-dom";
 
 test("renders the card with correct Pokemon data", () => {
   const pokemon = {
@@ -24,9 +23,7 @@ test("clicking the card triggers onClick event", () => {
   const mockOnClick = jest.fn();
 
   render(
-    <MemoryRouter>
       <Card id={1} name="Bulbasaur" image="https://example.com/bulbasaur.png" onClick={mockOnClick} />
-    </MemoryRouter>
   );
 
   const cardElement = screen.getByTestId("pokemon-card");

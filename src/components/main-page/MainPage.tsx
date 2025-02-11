@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Outlet, useParams, useSearchParams } from "react-router-dom";
 import Search from "../search/Search.tsx";
 import CardList from "../card-list/CardList.tsx";
-import useSearchTerm from "../../hooks/useSearchTerm.ts";
+import useSearchTerm from "../../hooks/useSearchTerm.tsx";
 import "../../App.css";
 
 const MainPage: React.FC = () => {

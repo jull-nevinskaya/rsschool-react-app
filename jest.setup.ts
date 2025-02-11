@@ -1,5 +1,7 @@
 import "@testing-library/jest-dom";
 import { TextEncoder, TextDecoder } from "util";
+import fetchMock from "jest-fetch-mock";
+fetchMock.enableMocks();
 
 if (typeof globalThis.TextEncoder === "undefined") {
   globalThis.TextEncoder = TextEncoder;
