@@ -24,7 +24,7 @@ describe("Flyout Component", () => {
     store = getMockStore();
   });
 
-  test("does not render when no pokemons are selected", () => {
+  test("does't render when pokemons arent selected", () => {
     const emptyStore = getMockStore();
     emptyStore.getState().selectedPokemons = [];
 
@@ -41,7 +41,7 @@ describe("Flyout Component", () => {
     expect(screen.getByRole("button", { name: /Download/i })).toBeInTheDocument();
   });
 
-  test("unselects all pokemons when clicking 'Unselect all'", () => {
+  test("unselects all pokemons button", () => {
     const dispatchSpy = jest.spyOn(store, "dispatch");
 
     renderWithProviders(store);
@@ -58,7 +58,7 @@ describe("Flyout Component", () => {
   });
 
 
-  test("downloads CSV file when clicking 'Download'", () => {
+  test("downloads CSV file when clicking button", () => {
     renderWithProviders(store);
 
     fireEvent.click(screen.getByRole("button", { name: /Download/i }));

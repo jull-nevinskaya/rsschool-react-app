@@ -13,7 +13,7 @@ const renderWithProviders = (component: ReactNode, store: ReturnType<typeof crea
   );
 };
 
-test("renders the card with correct Pokemon data", () => {
+test("renders the card with correct pokemon", () => {
   const pokemon = {
     id: 25,
     name: "Pikachu",
@@ -45,7 +45,7 @@ test("renders the card with correct Pokemon data", () => {
   expect(img).toHaveAttribute("alt", "Pikachu");
 });
 
-test("clicking the card triggers onClick event", () => {
+test("onClick event", () => {
   const mockOnClick = jest.fn();
 
   const store = createMockStore({ selectedPokemons: [] });

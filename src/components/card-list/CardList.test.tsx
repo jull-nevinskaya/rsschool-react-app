@@ -32,7 +32,7 @@ const renderWithProviders = (ui: React.ReactNode, initialState?: Record<string, 
   );
 };
 
-describe("CardList Component", () => {
+describe("CardList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -51,7 +51,7 @@ describe("CardList Component", () => {
   });
 
 
-  test("renders a list of Pokemon", async () => {
+  test("renders list of pokemons", async () => {
     (useGetPokemonsQuery as jest.Mock).mockReturnValue({
       data: {
         pokemons: [
@@ -71,7 +71,7 @@ describe("CardList Component", () => {
     expect(await screen.findByText(/Charmander/i)).toBeInTheDocument();
   });
 
-  test("renders the correct number of Pokemon cards", async () => {
+  test("correct number of pokemon cards", async () => {
     (useGetPokemonsQuery as jest.Mock).mockReturnValue({
       data: {
         pokemons: [
@@ -92,7 +92,7 @@ describe("CardList Component", () => {
     expect(cards).toHaveLength(3);
   });
 
-  test("displays an error message when no Pokemon are found", async () => {
+  test("error message when no found", async () => {
     (useGetPokemonsQuery as jest.Mock).mockReturnValue({
       data: { pokemons: [], totalCount: 0 },
       isLoading: false,
@@ -105,7 +105,7 @@ describe("CardList Component", () => {
     expect(await screen.findByText(/No Pokemon found for "UnknownPokemon"/i)).toBeInTheDocument();
   });
 
-  test("navigates to details page with correct parameters when a Pokemon card is clicked", async () => {
+  test("detail page", async () => {
     (useGetPokemonsQuery as jest.Mock).mockReturnValue({
       data: {
         pokemons: [{ id: 1, name: "Bulbasaur", image: "bulbasaur.png", height: 7, weight: 69, types: ["Grass", "Poison"] }],
@@ -150,7 +150,7 @@ describe("CardList Component", () => {
     expect(await screen.findByText("Failed to load pokemons. Try again later.")).toBeInTheDocument();
   });
 
-  test("applies correct theme class from context", () => {
+  test("correct theme from context", () => {
     (useGetPokemonsQuery as jest.Mock).mockReturnValue({
       data: { pokemons: [], totalCount: 0 },
       isLoading: false,
