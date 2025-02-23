@@ -1,12 +1,12 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import PokemonDetails from "./PokemonDetails";
-import { fetchPokemonDetails } from "../../api/api";
-import { jest } from "@jest/globals";
-import { ThemeProvider } from '../../ThemeContext.tsx';
+import { ThemeProvider } from "../../ThemeContext";
+import { useGetPokemonsQuery } from "../../api/pokemonApi";
 
-jest.mock("../../api/api", () => ({
-  fetchPokemonDetails: jest.fn() as jest.MockedFunction<typeof fetchPokemonDetails>,
+jest.mock("../../api/pokemonApi", () => ({
+  ...jest.requireActual("../../api/pokemonApi"),
+  useGetPokemonsQuery: jest.fn(),
 }));
 
 const renderWithRouter = (initialRoute: string) => {
@@ -28,8 +28,12 @@ describe("PokemonDetails Component", () => {
     jest.clearAllMocks();
   });
 
-  test("displays Spinner while loading", async () => {
-    (fetchPokemonDetails as jest.Mock).mockReturnValue(new Promise(() => {}));
+  test("displays Spinner while loading", () => {
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: undefined,
+    });
 
     renderWithRouter("/pokemon/1");
 
@@ -37,16 +41,22 @@ describe("PokemonDetails Component", () => {
   });
 
   test("renders Pokemon details when API call is successful", async () => {
-    const mockPokemon = {
-      id: 1,
-      name: "Pikachu",
-      height: 4,
-      weight: 60,
-      types: ["Electric"],
-      image: "https://example.com/pikachu.png",
-    };
-
-    (fetchPokemonDetails as jest.MockedFunction<typeof fetchPokemonDetails>).mockResolvedValue(mockPokemon);
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: {
+        pokemons: [
+          {
+            id: 1,
+            name: "Pikachu",
+            height: 4,
+            weight: 60,
+            types: ["Electric"],
+            image: "https://example.com/pikachu.png",
+          },
+        ],
+      },
+      isLoading: false,
+      error: undefined,
+    });
 
     renderWithRouter("/pokemon/1");
 
@@ -67,29 +77,39 @@ describe("PokemonDetails Component", () => {
 
       expect(screen.getByRole("img", { name: "Pikachu" })).toHaveAttribute("src", "https://example.com/pikachu.png");
     });
+
+
   });
 
   test("displays error message when API call fails", async () => {
-    (fetchPokemonDetails as jest.MockedFunction<typeof fetchPokemonDetails>).mockRejectedValue(
-      new Error("API error")
-    );
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error("API error"),
+    });
 
     renderWithRouter("/pokemon/1");
 
-    expect(await screen.findByText("Failed to load Pokémon details. Please try again.")).toBeInTheDocument();
+    expect(await screen.findByText("Error loading Pokemon details.")).toBeInTheDocument();
   });
 
   test("closes details when close button is clicked", async () => {
-    const mockPokemon = {
-      id: 1,
-      name: "Pikachu",
-      height: 4,
-      weight: 60,
-      types: ["Electric"],
-      image: "https://example.com/pikachu.png",
-    };
-
-    (fetchPokemonDetails as jest.MockedFunction<typeof fetchPokemonDetails>).mockResolvedValue(mockPokemon);
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: {
+        pokemons: [
+          {
+            id: 1,
+            name: "Pikachu",
+            height: 4,
+            weight: 60,
+            types: ["Electric"],
+            image: "https://example.com/pikachu.png",
+          },
+        ],
+      },
+      isLoading: false,
+      error: undefined,
+    });
 
     renderWithRouter("/pokemon/1");
 
@@ -105,8 +125,14 @@ describe("PokemonDetails Component", () => {
     });
   });
 
-  test("renders 'No details available' when id is missing", () => {
-    renderWithRouter("/pokemon");
+  test("renders 'No details available' when no data is found", () => {
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: { pokemons: [] },
+      isLoading: false,
+      error: undefined,
+    });
+
+    renderWithRouter("/pokemon/1");
 
     expect(screen.getByText("No details available")).toBeInTheDocument();
   });

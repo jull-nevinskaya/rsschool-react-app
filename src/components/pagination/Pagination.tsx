@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useTheme } from '../../ThemeContext.tsx';
+import { useTheme } from '../../hooks/useTheme.ts';
 
 interface PaginationProps {
   totalItems: number;

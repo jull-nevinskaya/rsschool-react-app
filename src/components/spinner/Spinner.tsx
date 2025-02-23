@@ -1,4 +1,4 @@
-import { useTheme } from '../../ThemeContext.tsx';
+import { useTheme } from '../../hooks/useTheme.ts';
 
 const Spinner : React.FC = () => {
     const { theme } = useTheme();

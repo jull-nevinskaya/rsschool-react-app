@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetPokemonsQuery } from "../../api/pokemonApi.ts";
-import { useTheme } from "../../ThemeContext.tsx";
+import { useTheme } from "../../hooks/useTheme.ts";
 import Spinner from '../spinner/Spinner.tsx';
 
 const PokemonDetails: React.FC = () => {

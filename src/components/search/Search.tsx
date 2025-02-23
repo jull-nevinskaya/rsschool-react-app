@@ -1,6 +1,6 @@
 import React from "react";
 import useSearchTerm from "../../hooks/useSearchTerm.tsx";
-import { useTheme } from '../../ThemeContext.tsx';
+import { useTheme } from '../../hooks/useTheme.ts';
 
 interface SearchProps {
   onSearch: (term: string) => void;

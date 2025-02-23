@@ -4,7 +4,7 @@ import Search from "../search/Search.tsx";
 import CardList from "../card-list/CardList.tsx";
 import useSearchTerm from "../../hooks/useSearchTerm.tsx";
 import "../../App.css";
-import { useTheme } from "../../ThemeContext";
+import { useTheme } from "../../hooks/useTheme.ts";
 import Flyout from "../flyout/Flyout.tsx";
 
 const MainPage: React.FC = () => {

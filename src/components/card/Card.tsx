@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../../ThemeContext.tsx';
+import { useTheme } from '../../hooks/useTheme.ts';
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSelection } from "../../store/selectedPokemonsSlice";
 import { RootState } from "../../store/store";

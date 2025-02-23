@@ -1,115 +1,122 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter, useSearchParams } from "react-router-dom";
-import CardList from "./CardList.tsx";
-import { fetchPokemons } from "../../api/api.ts";
-import { jest } from "@jest/globals";
-import { ThemeProvider } from '../../ThemeContext.tsx';
+import { MemoryRouter } from "react-router-dom";
+import CardList from "./CardList";
+import { ThemeProvider } from "../../ThemeContext";
+import { Provider } from "react-redux";
+import { createMockStore } from "../../__mocks__/createMockStore";
+import { useGetPokemonsQuery } from "../../api/pokemonApi";
 
 const mockNavigate = jest.fn();
 
-jest.mock("../../api/api.ts");
-jest.mock("react-router-dom", () => {
-  const actual = jest.requireActual<typeof import("react-router-dom")>("react-router-dom");
-  return {
-    ...actual,
-    useSearchParams: jest.fn(),
-    useNavigate: () => mockNavigate,
-  };
-});
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate,
+  useSearchParams: jest.fn(() => [new URLSearchParams("?page=1"), jest.fn()]),
+}));
 
-const mockFetchPokemons = fetchPokemons as jest.MockedFunction<typeof fetchPokemons>;
-const mockSetSearchParams = jest.fn();
+jest.mock("../../api/pokemonApi", () => ({
+  ...jest.requireActual("../../api/pokemonApi"),
+  useGetPokemonsQuery: jest.fn(),
+}));
 
-beforeEach(() => {
-  (useSearchParams as jest.Mock).mockReturnValue([new URLSearchParams("?page=1"), mockSetSearchParams]);
-});
 
-beforeEach(() => {
-  jest.spyOn(console, "error").mockImplementation(() => {});
-});
+const renderWithProviders = (ui: React.ReactNode, initialState?: Record<string, unknown>) => {
 
-afterEach(() => {
-  jest.restoreAllMocks();
-});
+  const store = createMockStore(initialState);
+  return render(
+    <Provider store={store}>
+      <ThemeProvider>
+        <MemoryRouter>{ui}</MemoryRouter>
+      </ThemeProvider>
+    </Provider>
+  );
+};
 
 describe("CardList Component", () => {
   beforeEach(() => {
-    window.history.pushState({}, "", "/");
-  });
+    jest.clearAllMocks();
 
-  test("renders a list of Pokemon", async () => {
-    mockFetchPokemons.mockResolvedValue({
-      pokemons: [
-        { id: 1, name: "Bulbasaur", image: "bulbasaur.png" },
-        { id: 2, name: "Charmander", image: "charmander.png" },
-      ],
-      totalCount: 2,
+    jest.spyOn(console, "error").mockImplementation((message) => {
+      if (typeof message === "string" && message.includes("Failed to load pokemons")) {
+        return;
+      }
+      console.warn(message);
     });
 
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-          <CardList searchTerm="" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: { pokemons: [], totalCount: 0 },
+      isLoading: false,
+      error: undefined,
+    });
+  });
+
+
+  test("renders a list of Pokemon", async () => {
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: {
+        pokemons: [
+          { id: 1, name: "Bulbasaur", image: "bulbasaur.png", height: 7, weight: 69, types: ["Grass", "Poison"] },
+          { id: 2, name: "Charmander", image: "charmander.png", height: 6, weight: 85, types: ["Fire"] },
+        ],
+        totalCount: 2,
+      },
+      isLoading: false,
+      isFetching: false,
+      error: undefined,
+    });
+
+    renderWithProviders(<CardList searchTerm="" />);
 
     expect(await screen.findByText(/Bulbasaur/i)).toBeInTheDocument();
     expect(await screen.findByText(/Charmander/i)).toBeInTheDocument();
   });
 
   test("renders the correct number of Pokemon cards", async () => {
-    mockFetchPokemons.mockResolvedValue({
-      pokemons: [
-        { id: 1, name: "Bulbasaur", image: "bulbasaur.png" },
-        { id: 2, name: "Charmander", image: "charmander.png" },
-        { id: 3, name: "Squirtle", image: "squirtle.png" },
-      ],
-      totalCount: 3,
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: {
+        pokemons: [
+          { id: 1, name: "Bulbasaur", image: "bulbasaur.png", height: 7, weight: 69, types: ["Grass", "Poison"] },
+          { id: 2, name: "Charmander", image: "charmander.png", height: 6, weight: 85, types: ["Fire"] },
+          { id: 3, name: "Squirtle", image: "squirtle.png", height: 5, weight: 90, types: ["Water"] },
+        ],
+        totalCount: 3,
+      },
+      isLoading: false,
+      isFetching: false,
+      error: undefined,
     });
 
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-         <CardList searchTerm="" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<CardList searchTerm="" />);
 
     const cards = await screen.findAllByTestId("pokemon-card");
     expect(cards).toHaveLength(3);
   });
 
   test("displays an error message when no Pokemon are found", async () => {
-    mockFetchPokemons.mockResolvedValue({
-      pokemons: [],
-      totalCount: 0,
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: { pokemons: [], totalCount: 0 },
+      isLoading: false,
+      isFetching: false,
+      error: undefined,
     });
 
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-         <CardList searchTerm="UnknownPokemon" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<CardList searchTerm="UnknownPokemon" />);
 
     expect(await screen.findByText(/No Pokemon found for "UnknownPokemon"/i)).toBeInTheDocument();
   });
 
   test("navigates to details page with correct parameters when a Pokemon card is clicked", async () => {
-    (fetchPokemons as jest.MockedFunction<typeof fetchPokemons>).mockResolvedValue({
-      pokemons: [{ id: 1, name: "Bulbasaur", image: "bulbasaur.png" }],
-      totalCount: 1,
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: {
+        pokemons: [{ id: 1, name: "Bulbasaur", image: "bulbasaur.png", height: 7, weight: 69, types: ["Grass", "Poison"] }],
+        totalCount: 1,
+      },
+      isLoading: false,
+      isFetching: false,
+      error: undefined,
     });
 
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <ThemeProvider>
-         <CardList searchTerm="" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<CardList searchTerm="" />);
 
     const card = await screen.findByText(/Bulbasaur/i);
     fireEvent.click(card);
@@ -117,75 +124,62 @@ describe("CardList Component", () => {
     expect(mockNavigate).toHaveBeenCalledWith("details/1?page=1");
   });
 
-  test("renders spinner while loading", async () => {
-    (fetchPokemons as jest.Mock).mockImplementation(
-      () => new Promise(() => {})
-    );
+  test("renders spinner while loading", () => {
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+      error: undefined,
+    });
 
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-         <CardList searchTerm="" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<CardList searchTerm="" />);
 
     expect(screen.getByTestId("spinner")).toBeInTheDocument();
   });
 
-  test("renders error message when API returns 404", async () => {
-    (fetchPokemons as jest.Mock).mockRejectedValue(new Error("404") as unknown as never);
+  test("renders error message when API call fails", async () => {
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: new Error("API Error"),
+    });
 
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-          <CardList searchTerm="Unknown" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<CardList searchTerm="ErrorTest" />);
 
-    expect(await screen.findByText("Pokemon not found. Let's try a different name")).toBeInTheDocument();
+    expect(await screen.findByText("Failed to load pokemons. Try again later.")).toBeInTheDocument();
   });
 
-  test("renders error message when API returns 400", async () => {
-    (fetchPokemons as jest.Mock).mockRejectedValue(new Error("400") as unknown as never);
+  test("applies correct theme class from context", () => {
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: { pokemons: [], totalCount: 0 },
+      isLoading: false,
+      isFetching: false,
+      error: undefined,
+    });
 
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-         <CardList searchTerm="InvalidQuery" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<CardList searchTerm="" />);
 
-    expect(await screen.findByText("Invalid search query. Please try again")).toBeInTheDocument();
+    const cardList = screen.getByTestId("card-list");
+    expect(cardList).toHaveClass("card-list light");
   });
 
-  test("renders error message when API returns 500", async () => {
-    (fetchPokemons as jest.Mock).mockRejectedValue(new Error("500") as unknown as never);
+  test("renders spinner when isFetching is true", async () => {
+    (useGetPokemonsQuery as jest.Mock).mockReturnValue({
+      data: {
+        pokemons: [{ id: 1, name: "Bulbasaur", image: "bulbasaur.png", height: 7, weight: 69, types: ["Grass", "Poison"] }],
+        totalCount: 1,
+      },
+      isLoading: false,
+      isFetching: true,
+      error: undefined,
+    });
 
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-         <CardList searchTerm="ServerIssue" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<CardList searchTerm="" />);
 
-    expect(await screen.findByText("Server error. Please try again later")).toBeInTheDocument();
+    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+
+    expect(await screen.findByText(/Bulbasaur/i)).toBeInTheDocument();
   });
 
-  test("renders network error message when API fails unexpectedly", async () => {
-    (fetchPokemons as jest.Mock).mockRejectedValue(new Error("Network timeout") as unknown as never);
-
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-         <CardList searchTerm="TimeoutTest" />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
-
-    expect(await screen.findByText("Network error. Please check your connection")).toBeInTheDocument();
-  });
 });

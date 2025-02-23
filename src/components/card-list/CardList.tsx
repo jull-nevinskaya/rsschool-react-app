@@ -4,7 +4,7 @@ import { useGetPokemonsQuery } from "../../api/pokemonApi.ts";
 import Card from "../card/Card.tsx";
 import Spinner from "../spinner/Spinner.tsx";
 import Pagination from "../pagination/Pagination.tsx";
-import { useTheme } from "../../ThemeContext.tsx";
+import { useTheme } from "../../hooks/useTheme.ts";
 
 const DEFAULT_LIMIT = 15;
 
@@ -33,7 +33,7 @@ const CardList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
     <div className="col-1">
       {isFetching && <Spinner />}
 
-      <div className={`card-list ${theme}`}>
+      <div className={`card-list ${theme}`} data-testid="card-list">
         {pokemons.length > 0 ? (
           pokemons.map((pokemon) => (
             <Card

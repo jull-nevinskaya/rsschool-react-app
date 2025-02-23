@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import pikachuImg from '../../assets/pikachu.jpg';
-import { useTheme } from '../../ThemeContext.tsx';
+import { useTheme } from '../../hooks/useTheme.ts';
 
 const NotFound: React.FC = () => {
   const { theme } = useTheme();
