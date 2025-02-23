@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useSearchParams } from "react-router-dom";
 import Pagination from "./Pagination.tsx";
 import { jest } from "@jest/globals";
+import { ThemeProvider } from '../../ThemeContext.tsx';
 
 jest.mock("react-router-dom", () => {
   const actual = jest.requireActual<typeof import("react-router-dom")>("react-router-dom");
@@ -23,7 +24,9 @@ beforeEach(() => {
 test("updates URL query parameter when page changes", async () => {
   render(
     <MemoryRouter>
-      <Pagination totalItems={30} itemsPerPage={10} />
+      <ThemeProvider>
+        <Pagination totalItems={30} itemsPerPage={10} />
+      </ThemeProvider>
     </MemoryRouter>
   );
 
@@ -45,7 +48,9 @@ test("updates URL query parameter when page changes", async () => {
 
   render(
     <MemoryRouter>
-      <Pagination totalItems={30} itemsPerPage={10} />
+      <ThemeProvider>
+       <Pagination totalItems={30} itemsPerPage={10} />
+      </ThemeProvider>
     </MemoryRouter>
   );
 
@@ -68,9 +73,11 @@ test("if currentPage > totalPages, it sets page = totalPages", async () => {
 
   render(
     <MemoryRouter>
-      <Routes>
-        <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
-      </Routes>
+      <ThemeProvider>
+        <Routes>
+          <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
+        </Routes>
+      </ThemeProvider>
     </MemoryRouter>
   );
 

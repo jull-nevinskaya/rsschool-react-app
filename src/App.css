@@ -6,6 +6,11 @@
   font-family: Arial, sans-serif;
 }
 
+.theme-dark {
+  background-color: #2E2E2E;
+  color: #ffffff;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -26,6 +31,12 @@
   font-size: 16px;
 }
 
+.search-input.dark {
+  background: #2E2E2E;
+  border-color: #555555;
+  color: #F5F5F5;
+}
+
 .search-button {
   padding: 10px 15px;
   background-color: #007bff;
@@ -34,9 +45,34 @@
   cursor: pointer;
   border-radius: 5px;
   font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.search-button.dark{
+  background-color: #ffdd2d;
+  color: black;
 }
 
 .search-button:hover {
+  background-color: #0056b3;
+}
+
+.search-button.dark:hover {
+  background-color: #fab619;
+}
+
+.toggle-theme {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-theme:hover {
   background-color: #0056b3;
 }
 
@@ -63,7 +99,7 @@
 
 .card {
   width: 180px;
-  height: 150px;
+  height: 190px;
   border: 1px solid #ddd;
   padding: 10px;
   margin: 10px;
@@ -78,8 +114,18 @@
   transition: background-color 0.3s ease;
 }
 
+.card.dark {
+  background: #242424;
+  border: 1px solid #242424;
+  color: #F5F5F5;
+}
+
 .card:hover {
   background-color: #e0e0e0;
+}
+
+.card.dark:hover {
+  background-color: #353535;
 }
 
 .card p {
@@ -96,7 +142,6 @@
   font-size: 16px;
   max-width: 160px;
   text-overflow: ellipsis;
-  overflow: hidden;
   white-space: nowrap;
 }
 
@@ -159,6 +204,10 @@
   margin: 20px auto;
 }
 
+.spinner.dark {
+  border-left-color: #ffdd2d;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -179,8 +228,17 @@
   transition: background-color 0.3s ease;
 }
 
+.btn-pagination.dark{
+  background-color: #ffdd2d;
+  border: none;
+}
+
 .btn-pagination:hover {
   background-color: #e0e0e0;
+}
+
+.btn-pagination.dark:hover {
+  background-color: #fab619;
 }
 
 .pagination span {
@@ -190,7 +248,7 @@
 .btn-close {
   width: 35px;
   height: 35px;
-  border-radius: 50%; /* Делаем кнопку круглой */
+  border-radius: 50%;
   border: none;
   background-color: #f9f9f9;
   color: black;
@@ -203,8 +261,16 @@
   transition: background-color 0.3s ease;
 }
 
+.btn-close.dark {
+  background-color: #ffdd2d;
+}
+
 .btn-close:hover {
   background-color: #e0e0e0;
+}
+
+.btn-close.dark:hover {
+  background-color: #fab619;
 }
 
 .btn-close:focus {
@@ -229,6 +295,12 @@
   min-width: 300px;
 }
 
+.right-column.dark {
+  background: #242424;
+  border: 1px solid #242424;
+  color: #F5F5F5;
+}
+
 .cardlist-main {
   display: flex;
   gap: 10px;
@@ -249,6 +321,98 @@
   text-decoration: underline;
 }
 
+.home-link.dark {
+  color: white;
+  font-weight: normal;
+}
+
 .home-link:hover {
   text-decoration: none;
+}
+
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+}
+
+.custom-checkbox::before {
+  content: "";
+  display: none;
+  width: 6px;
+  height: 14px;
+  border: solid white;
+  border-width: 0px 2px 2px 0;
+  transform: rotate(45deg);
+  position: absolute;
+  margin-bottom: 5px;
+}
+
+.custom-checkbox:checked {
+  background-color: #007aff;
+  border-color: #007aff;
+}
+
+.custom-checkbox:checked::before {
+  display: block;
+}
+
+.custom-checkbox:hover {
+  border-color: #007aff;
+}
+
+.custom-checkbox:active {
+  transform: scale(0.9);
+}
+
+.flyout {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(217, 217, 217, 0.9);
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 50px 10px 50px;
+}
+
+.flyout button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.flyout button:hover {
+  background-color: #0056b3;
+}
+
+.flyout button:first-of-type {
+  background-color: white;
+  color: black;
+}
+
+.flyout button:first-of-type:hover {
+  background-color: #f0f0f0;
+}
+
+.flyout p {
+  color: black;
 }

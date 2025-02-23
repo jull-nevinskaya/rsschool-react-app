@@ -1,5 +1,8 @@
+import { useTheme } from '../../ThemeContext.tsx';
+
 const Spinner : React.FC = () => {
-    return <div className="spinner" data-testid="spinner"></div>;
+    const { theme } = useTheme();
+    return <div className={`spinner ${theme}`} data-testid="spinner"></div>;
 }
 
 export default Spinner;

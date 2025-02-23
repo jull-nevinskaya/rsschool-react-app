@@ -3,14 +3,17 @@ import { MemoryRouter, Route, Routes, Router } from "react-router-dom";
 import Pagination from "./Pagination";
 import { createMemoryHistory } from "history";
 import userEvent from "@testing-library/user-event";
+import { ThemeProvider } from "../../ThemeContext";
 
 describe("Pagination Component", () => {
   test("does not render if total pages are less than 1", () => {
     const { container } = render(
       <MemoryRouter initialEntries={["/?page=1"]}>
-        <Routes>
-          <Route path="/" element={<Pagination totalItems={0} itemsPerPage={10} />} />
-        </Routes>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/" element={<Pagination totalItems={0} itemsPerPage={10} />} />
+          </Routes>
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -20,7 +23,9 @@ describe("Pagination Component", () => {
   test("does not render if only 1 page exists", () => {
     const { container } = render(
       <MemoryRouter>
-        <Pagination totalItems={10} itemsPerPage={10} />
+        <ThemeProvider>
+          <Pagination totalItems={10} itemsPerPage={10} />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -30,9 +35,11 @@ describe("Pagination Component", () => {
   test("renders if total pages are more than 1", () => {
     render(
       <MemoryRouter initialEntries={["/?page=1"]}>
-        <Routes>
-          <Route path="/" element={<Pagination totalItems={25} itemsPerPage={10} />} />
-        </Routes>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/" element={<Pagination totalItems={25} itemsPerPage={10} />} />
+          </Routes>
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -44,9 +51,11 @@ describe("Pagination Component", () => {
   test("displays the correct current page", () => {
     render(
       <MemoryRouter initialEntries={["/?page=2"]}>
-        <Routes>
-          <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
-        </Routes>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
+          </Routes>
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -56,9 +65,11 @@ describe("Pagination Component", () => {
   test("back button is disabled on the first page", () => {
     render(
       <MemoryRouter initialEntries={["/?page=1"]}>
-        <Routes>
-          <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
-        </Routes>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
+          </Routes>
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -68,9 +79,11 @@ describe("Pagination Component", () => {
   test("next button is disabled on the last page", () => {
     render(
       <MemoryRouter initialEntries={["/?page=3"]}>
-        <Routes>
-          <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
-        </Routes>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/" element={<Pagination totalItems={30} itemsPerPage={10} />} />
+          </Routes>
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -81,9 +94,11 @@ describe("Pagination Component", () => {
     const history = createMemoryHistory({ initialEntries: ["/?page=1"] });
 
     render(
-      <Router location={history.location} navigator={history}>
-        <Pagination totalItems={30} itemsPerPage={10} />
-      </Router>
+      <ThemeProvider>
+        <Router location={history.location} navigator={history}>
+          <Pagination totalItems={30} itemsPerPage={10} />
+        </Router>
+      </ThemeProvider>
     );
 
     const nextButton = screen.getByRole("button", { name: /→/ });
@@ -99,9 +114,11 @@ describe("Pagination Component", () => {
     const history = createMemoryHistory({ initialEntries: ["/?page=2"] });
 
     render(
-      <Router location={history.location} navigator={history}>
-        <Pagination totalItems={30} itemsPerPage={10} />
-      </Router>
+      <ThemeProvider>
+        <Router location={history.location} navigator={history}>
+          <Pagination totalItems={30} itemsPerPage={10} />
+        </Router>
+      </ThemeProvider>
     );
 
     const backButton = screen.getByRole("button", { name: /←/ });

@@ -1,89 +1,61 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useGetPokemonsQuery } from "../../api/pokemonApi.ts";
 import Card from "../card/Card.tsx";
 import Spinner from "../spinner/Spinner.tsx";
 import Pagination from "../pagination/Pagination.tsx";
-import { fetchPokemons } from "../../api/api.ts";
+import { useTheme } from "../../ThemeContext.tsx";
 
-interface Pokemon {
-  id: number;
-  name: string;
-  image: string;
-}
+const DEFAULT_LIMIT = 15;
 
 const CardList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
+  const { theme } = useTheme();
   const [searchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
-  const limit = 15;
-  const offset = (page - 1) * limit;
+  const offset = (page - 1) * DEFAULT_LIMIT;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-
-    fetchPokemons(searchTerm, limit, offset)
-      .then((results) => {
-        setPokemons(results.pokemons);
-        setTotalCount(results.totalCount);
-      })
-      .catch((error) => {
-        console.error("API Fetch Error:", error);
-
-        let errorMessage = "Unexpected error occurred. Please try again";
-
-        if (error instanceof Error) {
-          if (error.message.includes("404")) {
-            errorMessage = "Pokemon not found. Let's try a different name";
-          } else if (error.message.startsWith("4")) {
-            errorMessage = "Invalid search query. Please try again";
-          } else if (error.message.startsWith("5")) {
-            errorMessage = "Server error. Please try again later";
-          } else {
-            errorMessage = "Network error. Please check your connection";
-          }
-        }
-
-        setError(errorMessage);
-        setPokemons([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [searchTerm, page, offset]);
+  const { data, error, isLoading, isFetching } = useGetPokemonsQuery({ searchTerm, limit: DEFAULT_LIMIT, offset });
 
   const handleClick = (id: number) => {
     navigate(`details/${id}?page=${page}`);
   };
 
-  if (loading) return <Spinner />;
-  if (error) return <p className="error-message">{error}</p>;
+  const pokemons = data?.pokemons ?? [];
+
+  if (isLoading) return <Spinner />;
+  if (error) {
+    console.error("Failed to load pokemons:", error);
+    return <p className="error-message">Failed to load pokemons. Try again later.</p>;
+  }
 
   return (
-      <div className="col-1">
-        <div className="card-list">
-          {pokemons.length > 0 ? (
-            pokemons.map((pokemon) => (
-              <Card
-                key={pokemon.id}
-                id={pokemon.id}
-                name={pokemon.name}
-                image={pokemon.image}
-                onClick={() => handleClick(pokemon.id)}
-              />
-            ))
-          ) : (
-            <p className="error-message">No Pokemon found for "{searchTerm}". Try a different name.</p>
-          )}
-        </div>
+    <div className="col-1">
+      {isFetching && <Spinner />}
 
-        {totalCount > limit && <Pagination totalItems={totalCount} itemsPerPage={limit} />}
+      <div className={`card-list ${theme}`}>
+        {pokemons.length > 0 ? (
+          pokemons.map((pokemon) => (
+            <Card
+              key={pokemon.id}
+              id={pokemon.id}
+              name={pokemon.name}
+              image={pokemon.image}
+              height={pokemon.height}
+              weight={pokemon.weight}
+              types={pokemon.types}
+              onClick={() => handleClick(pokemon.id)}
+            />
+          ))
+        ) : (
+          <p className="error-message">No Pokemon found for "{searchTerm}". Try a different name.</p>
+        )}
       </div>
+
+      {data?.totalCount && data.totalCount > DEFAULT_LIMIT && (
+        <Pagination totalItems={data.totalCount} itemsPerPage={DEFAULT_LIMIT} />
+      )}
+    </div>
   );
 };
 

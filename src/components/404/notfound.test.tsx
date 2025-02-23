@@ -1,12 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import NotFound from "./NotFound";
+import { ThemeProvider } from '../../ThemeContext.tsx';
 
 describe("NotFound Component", () => {
   test("renders error message", () => {
     render(
       <MemoryRouter>
-        <NotFound />
+        <ThemeProvider>
+         <NotFound />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -16,7 +19,9 @@ describe("NotFound Component", () => {
   test("renders error image", () => {
     render(
       <MemoryRouter>
-        <NotFound />
+        <ThemeProvider>
+          <NotFound />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -28,7 +33,9 @@ describe("NotFound Component", () => {
   test("renders link to main page", () => {
     render(
       <MemoryRouter>
-        <NotFound />
+        <ThemeProvider>
+         <NotFound />
+        </ThemeProvider>
       </MemoryRouter>
     );
 

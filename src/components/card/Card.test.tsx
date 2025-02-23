@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Card from "./Card.tsx";
+import { ThemeProvider } from '../../ThemeContext.tsx';
 
 test("renders the card with correct Pokemon data", () => {
   const pokemon = {
@@ -8,7 +9,11 @@ test("renders the card with correct Pokemon data", () => {
     image: "pikachu.png",
   };
 
-  render(<Card id={pokemon.id} name={pokemon.name} image={pokemon.image} />);
+  render(
+    <ThemeProvider>
+     <Card id={pokemon.id} name={pokemon.name} image={pokemon.image} />
+    </ThemeProvider>
+  );
 
   expect(screen.getByText(/Pikachu/i)).toBeInTheDocument();
 
@@ -23,7 +28,9 @@ test("clicking the card triggers onClick event", () => {
   const mockOnClick = jest.fn();
 
   render(
+    <ThemeProvider>
       <Card id={1} name="Bulbasaur" image="https://example.com/bulbasaur.png" onClick={mockOnClick} />
+    </ThemeProvider>
   );
 
   const cardElement = screen.getByTestId("pokemon-card");

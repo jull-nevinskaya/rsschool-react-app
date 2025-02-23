@@ -3,6 +3,7 @@ import { MemoryRouter, useSearchParams } from "react-router-dom";
 import CardList from "./CardList.tsx";
 import { fetchPokemons } from "../../api/api.ts";
 import { jest } from "@jest/globals";
+import { ThemeProvider } from '../../ThemeContext.tsx';
 
 const mockNavigate = jest.fn();
 
@@ -47,7 +48,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="" />
+        <ThemeProvider>
+          <CardList searchTerm="" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -67,7 +70,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="" />
+        <ThemeProvider>
+         <CardList searchTerm="" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -83,7 +88,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="UnknownPokemon" />
+        <ThemeProvider>
+         <CardList searchTerm="UnknownPokemon" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -98,7 +105,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter initialEntries={["/"]}>
-        <CardList searchTerm="" />
+        <ThemeProvider>
+         <CardList searchTerm="" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -115,7 +124,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="" />
+        <ThemeProvider>
+         <CardList searchTerm="" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -127,7 +138,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="Unknown" />
+        <ThemeProvider>
+          <CardList searchTerm="Unknown" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -139,7 +152,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="InvalidQuery" />
+        <ThemeProvider>
+         <CardList searchTerm="InvalidQuery" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -151,7 +166,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="ServerIssue" />
+        <ThemeProvider>
+         <CardList searchTerm="ServerIssue" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
@@ -163,7 +180,9 @@ describe("CardList Component", () => {
 
     render(
       <MemoryRouter>
-        <CardList searchTerm="TimeoutTest" />
+        <ThemeProvider>
+         <CardList searchTerm="TimeoutTest" />
+        </ThemeProvider>
       </MemoryRouter>
     );
 

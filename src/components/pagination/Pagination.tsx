@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTheme } from '../../ThemeContext.tsx';
 
 interface PaginationProps {
   totalItems: number;
@@ -7,6 +8,7 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ totalItems, itemsPerPage }) => {
+  const { theme } = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -27,12 +29,12 @@ const Pagination: React.FC<PaginationProps> = ({ totalItems, itemsPerPage }) => 
   };
 
   return (
-    <div className="pagination">
-      <button className="btn-pagination" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+    <div className={`pagination ${theme}`}>
+      <button className={`btn-pagination ${theme}`} onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
         &#8592;
       </button>
       <span>Page {currentPage} / {totalPages}</span>
-      <button className="btn-pagination" onClick={() => handlePageChange(currentPage + 1)}
+      <button className={`btn-pagination ${theme}`} onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}>
         &#8594;
       </button>

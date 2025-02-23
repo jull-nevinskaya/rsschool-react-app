@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Search from "./Search.tsx";
+import { ThemeProvider } from '../../ThemeContext.tsx';
 
 describe("Search component", () => {
   beforeEach(() => {
@@ -13,7 +14,11 @@ describe("Search component", () => {
 
   it("saves the entered value to localStorage when Search button is clicked", () => {
     const mockOnSearch = jest.fn();
-    render(<Search onSearch={mockOnSearch} />);
+    render(
+      <ThemeProvider>
+        <Search onSearch={mockOnSearch} />
+      </ThemeProvider>
+    );
 
     const input = screen.getByPlaceholderText("Enter Pokemon name...");
     const button = screen.getByText("Search");
@@ -29,8 +34,11 @@ describe("Search component", () => {
   it("retrieves the value from localStorage upon mounting", () => {
     localStorage.setItem("searchTerm", "Pikachu");
 
-    render(<Search onSearch={jest.fn()} />);
-
+    render(
+      <ThemeProvider>
+       <Search onSearch={jest.fn()} />
+        </ThemeProvider>
+    );
     const input = screen.getByPlaceholderText("Enter Pokemon name...");
     expect(input).toHaveValue("Pikachu");
   });

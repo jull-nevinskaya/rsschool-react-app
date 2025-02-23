@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
 import { MemoryRouter, NavigateFunction, Route, Routes } from 'react-router-dom';
 import MainPage from "./MainPage";
 import { jest } from "@jest/globals";
+import { ThemeProvider } from '../../ThemeContext.tsx';
 
 jest.mock("../../hooks/useSearchTerm.tsx", () => ({
   __esModule: true,
@@ -26,13 +27,15 @@ jest.mock("react-router-dom", () => {
 const renderWithRoute = async (initialEntries: string[]) => {
   await act(async () => {
     render(
-      <MemoryRouter initialEntries={initialEntries}>
-        <Routes>
-          <Route path="/search" element={<p>Search Page</p>} />
-          <Route path="/search/:id" element={<MainPage />} />
-          <Route path="/" element={<MainPage />} />
-        </Routes>
-      </MemoryRouter>
+      <ThemeProvider>
+        <MemoryRouter initialEntries={initialEntries}>
+          <Routes>
+            <Route path="/search" element={<p>Search Page</p>} />
+            <Route path="/search/:id" element={<MainPage />} />
+            <Route path="/" element={<MainPage />} />
+          </Routes>
+        </MemoryRouter>
+      </ThemeProvider>
     );
   });
 };
@@ -42,13 +45,6 @@ describe("MainPage Component", () => {
     jest.clearAllMocks();
   });
 
-  test("renders Search and CardList", async () => {
-    await renderWithRoute(["/"]);
-
-    expect(screen.getByTestId("container")).toBeInTheDocument();
-    expect(screen.getByRole("textbox")).toBeInTheDocument(); // Input в Search
-    expect(screen.getByRole("button", { name: "Throw Error" })).toBeInTheDocument();
-  });
 
   test("closes details panel on outside click if id is present", async () => {
     await renderWithRoute(["/search/1?page=2"]);

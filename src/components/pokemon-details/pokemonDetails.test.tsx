@@ -3,6 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import PokemonDetails from "./PokemonDetails";
 import { fetchPokemonDetails } from "../../api/api";
 import { jest } from "@jest/globals";
+import { ThemeProvider } from '../../ThemeContext.tsx';
 
 jest.mock("../../api/api", () => ({
   fetchPokemonDetails: jest.fn() as jest.MockedFunction<typeof fetchPokemonDetails>,
@@ -11,11 +12,13 @@ jest.mock("../../api/api", () => ({
 const renderWithRouter = (initialRoute: string) => {
   return render(
     <MemoryRouter initialEntries={[initialRoute]}>
-      <Routes>
-        <Route path="/pokemon/:id" element={<PokemonDetails />} />
-        <Route path="/pokemon" element={<PokemonDetails />} />
-        <Route path="/search" element={<p>Search Page</p>} />
-      </Routes>
+      <ThemeProvider>
+        <Routes>
+          <Route path="/pokemon/:id" element={<PokemonDetails />} />
+          <Route path="/pokemon" element={<PokemonDetails />} />
+          <Route path="/search" element={<p>Search Page</p>} />
+        </Routes>
+      </ThemeProvider>
     </MemoryRouter>
   );
 };
