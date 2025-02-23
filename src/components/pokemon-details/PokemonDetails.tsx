@@ -2,15 +2,14 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetPokemonsQuery } from "../../api/pokemonApi.ts";
 import { useTheme } from "../../ThemeContext.tsx";
+import Spinner from '../spinner/Spinner.tsx';
 
 const PokemonDetails: React.FC = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
-  const { data } = useGetPokemonsQuery({});
-
-  const pokemon = data?.pokemons.find((p) => p.id === Number(id));
+  const { data, error, isLoading } = useGetPokemonsQuery({ searchTerm: id });
 
   const handleClose = () => {
     const currentParams = new URLSearchParams(window.location.search);
@@ -18,7 +17,11 @@ const PokemonDetails: React.FC = () => {
     navigate(`/search?page=${page}`);
   };
 
-  if (!pokemon) return <p>No details available</p>;
+  if (isLoading) return <Spinner />;
+  if (error) return <p>Error loading Pokemon details.</p>;
+  if (!data?.pokemons.length) return <p>No details available</p>;
+
+  const pokemon = data.pokemons[0];
 
   return (
     <div className={`detail-info ${theme}`}>

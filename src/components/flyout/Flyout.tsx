@@ -18,11 +18,13 @@ const Flyout: React.FC = () => {
     if (selectedPokemons.length === 0) return;
 
     const csvData = [
-      ["ID", "Name", "Details URL"],
+      ["ID", "Name", "Height", "Weight", "Types"],
       ...selectedPokemons.map((pokemon) => [
         pokemon.id,
         pokemon.name,
-        `https://pokeapi.co/api/v2/pokemon/${pokemon.id}`,
+        pokemon.height,
+        pokemon.weight,
+        pokemon.types
       ]),
     ];
 
